@@ -1,0 +1,37 @@
+@startuml
+start
+:Inisialisasi LCD, Motor DC, Stepper Motor, Buzzer, LED (Siang, Malam, Hujan), Sensor Cahaya, Sensor Hujan;
+:LCD tampil "Jemuran Otomatis";
+-> delay(2 detik);
+
+repeat
+: Baca sensor cahaya -> cahaya;
+: Baca sensor hujan -> hujan;
+: Update LED indikator Siang/Malam;
+: Tampilkan status Cahaya & Hujan di LCD;
+-> delay(2 detik);
+
+if (cahaya == 1 && hujan == 0) then (ya)
+  :LCD -> "Siang Cerah";
+else if (cahaya == 0 && hujan == 0) then (ya)
+  :LCD -> "Malam Cerah";
+else if (cahaya == 1 && hujan == 1) then (ya)
+  :LCD -> "Siang Hujan";
+else
+  :LCD -> "Malam Hujan";
+endif
+-> delay(2 detik);
+
+if (hujan == 1 && !sudahMasuk && !hujanSebelumnya) then (ya)
+  :Stepper motor bergerak masuk;
+  :Setelah 5 detik -> Nyalakan motor DC dan UV;
+  :Buzzer bunyi putus-putus (200ms);
+  :Update status hujan;
+else if (hujan == 0 && sudahMasuk && hujanSebelumnya) then (ya)
+  :Matikan motor DC dan UV;
+  :Stepper motor bergerak keluar;
+  :Update status hujan;
+endif
+-> delay(300 ms);
+backward :true;
+@enduml
